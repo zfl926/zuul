@@ -21,7 +21,11 @@ import com.netflix.zuul.filters.FilterRegistry;
 import com.netflix.zuul.groovy.GroovyCompiler;
 import com.netflix.zuul.groovy.GroovyFileFilter;
 import com.netflix.zuul.monitoring.MonitoringHelper;
+import com.netflix.zuul.simple.filter.StaticFilter;
+
 import java.io.File;
+import java.io.IOException;
+
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import org.slf4j.Logger;
@@ -66,6 +70,8 @@ public class StartServer implements ServletContextListener {
     private void initJavaFilters() {
         final FilterRegistry r = FilterRegistry.instance();
 
+        r.put("javaStaticFilter", new StaticFilter());
+        
         r.put("javaPreFilter", new ZuulFilter() {
             @Override
             public int filterOrder() {
@@ -86,6 +92,13 @@ public class StartServer implements ServletContextListener {
             public Object run() {
                 logger.debug("running javaPreFilter");
                 RequestContext.getCurrentContext().set("javaPreFilter-ran", true);
+                try {
+					RequestContext.getCurrentContext().getResponse().getWriter().write("javaPreFilter");
+					RequestContext.getCurrentContext().getResponse().getWriter().flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 return null;
             }
         });
@@ -110,6 +123,12 @@ public class StartServer implements ServletContextListener {
             public Object run() {
                 logger.debug("running javaPostFilter");
                 RequestContext.getCurrentContext().set("javaPostFilter-ran", true);
+                try {
+					RequestContext.getCurrentContext().getResponse().getWriter().write("javaPostFilter");
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
                 return null;
             }
         });
