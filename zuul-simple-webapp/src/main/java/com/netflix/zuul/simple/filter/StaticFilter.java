@@ -11,7 +11,7 @@ import com.netflix.zuul.exception.ZuulException;
 public class StaticFilter extends ZuulFilter {
 
 	private String responseBody(){
-		return "Static Filter";
+		return "javaStaticFilter\n";
 	}
 	
 	@Override
@@ -26,9 +26,17 @@ public class StaticFilter extends ZuulFilter {
         ctx.setResponseStatusCode(HttpServletResponse.SC_OK);
         try {
 			ctx.getResponse().getWriter().write(responseBody());
+			ctx.getResponse().getWriter().flush();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				ctx.getResponse().getWriter().close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
         // first StaticResponseFilter instance to match wins, others do not set body and/or status
         //if (ctx.getResponseBody() == null) {

@@ -93,7 +93,7 @@ public class StartServer implements ServletContextListener {
                 logger.debug("running javaPreFilter");
                 RequestContext.getCurrentContext().set("javaPreFilter-ran", true);
                 try {
-					RequestContext.getCurrentContext().getResponse().getWriter().write("javaPreFilter");
+					RequestContext.getCurrentContext().getResponse().getWriter().write("javaPreFilter\n");
 					RequestContext.getCurrentContext().getResponse().getWriter().flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
@@ -124,7 +124,9 @@ public class StartServer implements ServletContextListener {
                 logger.debug("running javaPostFilter");
                 RequestContext.getCurrentContext().set("javaPostFilter-ran", true);
                 try {
-					RequestContext.getCurrentContext().getResponse().getWriter().write("javaPostFilter");
+                	if ( !RequestContext.getCurrentContext().getResponse().isCommitted() ){
+                		RequestContext.getCurrentContext().getResponse().getWriter().write("javaPostFilter\n");
+                	}
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
