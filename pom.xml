@@ -10,7 +10,8 @@
 	<modules>
 		<module>zuul-core</module>
 		<module>zuul-simple-webapp</module>
-  	</modules>
+    <module>zuul-undertow</module>
+  </modules>
 
 	<properties>
 		<plugin.compiler.version>3.1</plugin.compiler.version>
