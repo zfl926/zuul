@@ -1,10 +1,8 @@
-package org.egateway.server.undertow;
+package org.egateway.core.server.undertow;
 
 import io.undertow.Undertow;
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
-import io.undertow.server.handlers.proxy.ProxyHandler;
-import io.undertow.util.SameThreadExecutor;
 
 /**
  * Hello world!

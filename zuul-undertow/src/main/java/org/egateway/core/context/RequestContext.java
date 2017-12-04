@@ -1,4 +1,4 @@
-package org.egateway.context;
+package org.egateway.core.context;
 
 public class RequestContext {
 
