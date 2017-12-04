@@ -7,11 +7,6 @@ import java.util.Map;
  */
 public interface ResponseWrapper {
 	/**
-	 * get the detail response data by wrap
-	 * @return
-	 */
-	Object getResponse();
-	/**
 	 * @return
 	 */
 	Map<String, String> getHeaders();
