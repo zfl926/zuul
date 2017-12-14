@@ -28,5 +28,11 @@
 			<artifactId>undertow-core</artifactId>
 			<version>1.4.20.Final</version>
 		</dependency>
+		<!-- yaml -->
+		<dependency>
+		    <groupId>org.yaml</groupId>
+		    <artifactId>snakeyaml</artifactId>
+		    <version>1.19</version>
+		</dependency>		
 	</dependencies>
 </project>
