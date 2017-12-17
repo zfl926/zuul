@@ -1,0 +1,10 @@
+host: /host
+name: tn
+port: 8080
+proxy:
+  /test: upstream
+upstreams:
+- name: upstream
+  urls:
+  - http://test1
+  - http://test2

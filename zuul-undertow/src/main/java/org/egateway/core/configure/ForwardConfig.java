@@ -8,6 +8,20 @@ public class ForwardConfig {
 	private String                 name;
 	private String                 host;
 	private int                    port;
+	
+	public ForwardConfig() {
+		
+	}
+	// constructure
+	public ForwardConfig(String name, String host, int port, Map<String, String> proxy,
+			List<UpstreamConfig> upstreams) {
+		this.name = name;
+		this.host = host;
+		this.port = port;
+		this.proxy = proxy;
+		this.upstreams = upstreams;
+	}
+	
 	// upstream configure class
 	public static class UpstreamConfig {
 		private String                                name;
@@ -24,6 +38,10 @@ public class ForwardConfig {
 		}
 		public void setUrls(List<String> urls) {
 			this.urls = urls;
+		}
+		@Override
+		public String toString() {
+			return "UpstreamConfig [name=" + name + ", urls=" + urls + "]";
 		}
 	}
 	// upstream mapping
@@ -59,5 +77,10 @@ public class ForwardConfig {
 	}
 	public void setUpstreams(List<UpstreamConfig> upstreams) {
 		this.upstreams = upstreams;
+	}
+	@Override
+	public String toString() {
+		return "ForwardConfig [name=" + name + ", host=" + host + ", port=" + port + ", proxy=" + proxy + ", upstreams="
+				+ upstreams + "]";
 	}
 }

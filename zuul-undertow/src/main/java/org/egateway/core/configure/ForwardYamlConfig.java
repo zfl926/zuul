@@ -1,5 +1,8 @@
 package org.egateway.core.configure;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -18,8 +21,8 @@ public class ForwardYamlConfig implements Configure<ForwardConfig>{
 	private ForwardConfig configData = null;
 	
 	@Override
-	public void load(String file) {
-		configData = yaml.loadAs(file, ForwardConfig.class);
+	public void load(String file) throws FileNotFoundException {
+		configData = yaml.loadAs(new FileInputStream(new File(file)), ForwardConfig.class);
 	}
 
 	@Override
@@ -33,9 +36,7 @@ public class ForwardYamlConfig implements Configure<ForwardConfig>{
 	}
 
 	
-	public static void main(String args[]){
-		//ForwardYamlConfig config = new ForwardYamlConfig();
-		//config.load("");
+	public static void testDump() {
 		ForwardConfig forwardConfig = new ForwardConfig();
 		forwardConfig.setHost("/host");
 		forwardConfig.setName("tn");
@@ -53,9 +54,24 @@ public class ForwardYamlConfig implements Configure<ForwardConfig>{
 		ups.add(upstreamConfig);
 		forwardConfig.setUpstreams(ups);
 		DumperOptions options = new DumperOptions();
-		options.setDefaultFlowStyle(DumperOptions.FlowStyle.AUTO);
+		options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
 		Yaml y = new Yaml(options);
 		String dump = y.dump(forwardConfig);
 		System.out.println(dump);
+	}
+	
+	public static void testLoad() {
+		ForwardYamlConfig config = new ForwardYamlConfig();
+		try {
+			config.load("/Users/zhoupulei/Projects/git/zuul/zuul-undertow/src/main/resources/test.yaml");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(config.getProperties());
+	}
+	
+	public static void main(String args[]){
+		testLoad();
 	}
 }
