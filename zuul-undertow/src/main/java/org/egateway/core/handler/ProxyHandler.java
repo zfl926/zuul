@@ -20,7 +20,6 @@ import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.security.cert.CertificateEncodingException;
 import javax.security.cert.X509Certificate;
 
-import org.egateway.core.MyProxHandler;
 import org.jboss.logging.Logger;
 import org.xnio.ChannelExceptionHandler;
 import org.xnio.ChannelListener;
@@ -274,14 +273,14 @@ public class ProxyHandler implements HttpHandler {
 
         @Override
         public void completed(final HttpServerExchange exchange, final ProxyConnection connection) {
-        		System.out.println("thread name:" + Thread.currentThread().getName() + " conn = " + exchange.getRequestPath() + " success");
+        		//System.out.println("thread name:" + Thread.currentThread().getName() + " conn = " + exchange.getRequestPath() + " success");
             exchange.putAttachment(CONNECTION, connection);
             exchange.dispatch(SameThreadExecutor.INSTANCE, new ProxyAction(connection, exchange, requestHeaders, rewriteHostHeader, reuseXForwarded, exchange.isRequestComplete() ? this : null, idempotentPredicate));
         }
 
         @Override
         public void failed(final HttpServerExchange exchange) {
-        		System.out.println("thread name:" + Thread.currentThread().getName() + " try to connect: failed");
+        		//System.out.println("thread name:" + Thread.currentThread().getName() + " try to connect: failed");
             final long time = System.currentTimeMillis();
             if (tries++ < maxRetryAttempts) {
                 if (timeout > 0 && time > timeout) {
@@ -311,6 +310,7 @@ public class ProxyHandler implements HttpHandler {
                 IoUtils.safeClose(exchange.getConnection());
             } else {
                 exchange.setStatusCode(StatusCodes.SERVICE_UNAVAILABLE);
+                exchange.getResponseSender().send("Service Not Available");
                 exchange.endExchange();
             }
         }
@@ -328,6 +328,7 @@ public class ProxyHandler implements HttpHandler {
                 IoUtils.safeClose(exchange.getConnection());
             } else {
                 exchange.setStatusCode(StatusCodes.SERVICE_UNAVAILABLE);
+                exchange.getResponseSender().send("Service Not Available");
                 exchange.endExchange();
             }
         }

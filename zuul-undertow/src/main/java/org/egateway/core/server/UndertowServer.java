@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.egateway.core.configure.ForwardConfig.UpstreamConfig;
+import org.egateway.core.handler.RootHandler;
 
 import io.undertow.Undertow;
 
@@ -60,12 +61,19 @@ public class UndertowServer implements Server {
 	public void setUpstreamConfig(List<UpstreamConfig> upstreamConfig) {
 		this.upstreamConfig = upstreamConfig;
 	}
+	
+	public void init(){
+		Undertow.Builder builder = Undertow.builder();
+		RootHandler rootHandler = new RootHandler(urlMapping, upstreamConfig);
+		builder = builder.addHttpListener(port, host)
+					.setIoThreads(Runtime.getRuntime().availableProcessors())
+					.setWorkerThreads(Runtime.getRuntime().availableProcessors() * 10)
+					.setHandler(rootHandler);
+		server = builder.build();
+	}
 
 	@Override
 	public void start() {
-		Undertow.Builder builder = Undertow.builder();
-		builder.addHttpListener(port, host);
-		server = builder.build();
 		try {
 			server.start();
 		} catch (Exception e){

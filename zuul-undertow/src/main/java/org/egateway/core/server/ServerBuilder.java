@@ -27,10 +27,20 @@ public class ServerBuilder {
 
 	public ServerBuilder config(ForwardConfig config){
 		this.config = config;
+		this.host = config.getHost();
+		this.name = config.getName();
+		this.port = config.getPort();
 		return this;
 	}
 	
 	public Server build(){
-		return new UndertowServer();
+		UndertowServer server = new UndertowServer();
+		server.setHost(host);
+		server.setName(name);
+		server.setPort(port);
+		server.setUrlMapping(config.getProxy());
+		server.setUpstreamConfig(config.getUpstreams());
+		server.init();
+		return server;
 	}
 }
