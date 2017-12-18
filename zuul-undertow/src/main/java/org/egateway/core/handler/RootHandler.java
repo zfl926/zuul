@@ -1,6 +1,10 @@
 package org.egateway.core.handler;
 
-import org.egateway.core.configure.ForwardConfig;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.egateway.core.configure.ForwardConfig.UpstreamConfig;
 
 import io.undertow.server.HttpHandler;
 import io.undertow.server.HttpServerExchange;
@@ -12,16 +16,28 @@ import io.undertow.server.HttpServerExchange;
  */
 public class RootHandler implements HttpHandler{
 	
-	private ForwardConfig config;
+	private Map<String, String>                 urlMapping;
+	private List<UpstreamConfig>            upstreamConfig;
+	private Map<String, List<String>>          forwordUrls;
 	
-	
-	public ForwardConfig getConfig() {
-		return config;
+	public RootHandler(Map<String, String> urlMapping, List<UpstreamConfig> upstreamConfig){
+		this.urlMapping = urlMapping;
+		this.upstreamConfig = upstreamConfig;
+		if ( urlMapping != null && upstreamConfig != null ){
+			forwordUrls = new HashMap<>();
+			urlMapping.forEach((path, name) -> {
+				upstreamConfig.forEach(upstream -> {
+					if ( name.equals(upstream.getName()) ){
+						forwordUrls.put(path, upstream.getUrls());
+					}
+				});
+			});
+			if ( !forwordUrls.isEmpty() ){
+				
+			}
+		}
 	}
 
-	public void setConfig(ForwardConfig config) {
-		this.config = config;
-	}
 
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
