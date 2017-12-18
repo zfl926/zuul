@@ -3,6 +3,7 @@ package org.egateway.core.server;
 import java.util.List;
 import java.util.Map;
 
+import org.egateway.core.circuitbreaker.RequestCircuitBreakerHandlerWrapper;
 import org.egateway.core.configure.ForwardConfig.UpstreamConfig;
 import org.egateway.core.handler.RootHandler;
 
@@ -65,10 +66,11 @@ public class UndertowServer implements Server {
 	public void init(){
 		Undertow.Builder builder = Undertow.builder();
 		RootHandler rootHandler = new RootHandler(urlMapping, upstreamConfig);
+		RequestCircuitBreakerHandlerWrapper requestWrapper = new RequestCircuitBreakerHandlerWrapper(rootHandler);
 		builder = builder.addHttpListener(port, host)
 					.setIoThreads(Runtime.getRuntime().availableProcessors())
 					.setWorkerThreads(Runtime.getRuntime().availableProcessors() * 10)
-					.setHandler(rootHandler);
+					.setHandler(requestWrapper);
 		server = builder.build();
 	}
 
