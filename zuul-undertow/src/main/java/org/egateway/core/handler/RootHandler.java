@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.egateway.core.configure.ForwardConfig.StaticConfig;
 import org.egateway.core.configure.ForwardConfig.UpstreamConfig;
 
 import io.undertow.server.HttpHandler;
@@ -19,11 +20,13 @@ import io.undertow.server.handlers.proxy.LoadBalancingProxyClient;
  */
 public class RootHandler implements HttpHandler{
 	
-	private Map<Pattern, ProxyHandler>         proxyMapping;
-	
-	public RootHandler(Map<String, String> urlMapping, List<UpstreamConfig> upstreamConfig){
+	private Map<Pattern, HttpHandler>                                        handlerMapping;   // proxy mapping
+		
+	public RootHandler(Map<String, String> urlMapping, List<UpstreamConfig> upstreamConfig, List<StaticConfig> staticConfig){
 		Map<Pattern, List<String>> forwordUrls = new HashMap<>();
-		proxyMapping = new HashMap<>();
+		Map<Pattern, String> staticFolders = new HashMap<>();
+		handlerMapping = new HashMap<>();
+		// upstream configure setting
 		if ( urlMapping != null && upstreamConfig != null ){
 			urlMapping.forEach((path, name) -> {
 				upstreamConfig.forEach(upstream -> {
@@ -51,7 +54,24 @@ public class RootHandler implements HttpHandler{
 						}
 						
 					});
-					proxyMapping.put(pattern, myProxy);
+					handlerMapping.put(pattern, myProxy);
+				});
+			}
+		}
+		// static configure setting
+		if ( urlMapping != null && staticConfig != null ){
+			urlMapping.forEach((path, name) -> {
+				staticConfig.forEach(staticFolder -> {
+					if ( name.equals(staticFolder.getName()) ){
+						Pattern pattern = Pattern.compile(path);
+						staticFolders.put(pattern, staticFolder.getFolder());
+					}
+				});
+			});
+			if ( !staticFolders.isEmpty() ){
+				staticFolders.forEach((pattern, folder) -> {
+					StaticHandler staticHandler = new StaticHandler(folder);
+					handlerMapping.put(pattern, staticHandler);
 				});
 			}
 		}
@@ -60,12 +80,11 @@ public class RootHandler implements HttpHandler{
 
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
-		System.out.println("Thread id = " + Thread.currentThread().getName());
 		String requestPath = exchange.getRequestPath();
 		boolean isFound = false;
-		for (  Pattern pattern : proxyMapping.keySet() ){
+		for (  Pattern pattern : handlerMapping.keySet() ){
 			if ( pattern.matcher(requestPath).matches() ){
-				proxyMapping.get(pattern).handleRequest(exchange);
+				handlerMapping.get(pattern).handleRequest(exchange);
 				isFound = true;
 				break;
 			}

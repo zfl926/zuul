@@ -12,7 +12,7 @@ public class ForwardConfig {
 	public ForwardConfig() {
 		
 	}
-	// constructure
+	// construct
 	public ForwardConfig(String name, String host, int port, Map<String, String> proxy,
 			List<UpstreamConfig> upstreams) {
 		this.name = name;
@@ -21,7 +21,6 @@ public class ForwardConfig {
 		this.proxy = proxy;
 		this.upstreams = upstreams;
 	}
-	
 	// upstream configure class
 	public static class UpstreamConfig {
 		private String                                name;
@@ -44,9 +43,31 @@ public class ForwardConfig {
 			return "UpstreamConfig [name=" + name + ", urls=" + urls + "]";
 		}
 	}
+	// static configure class
+	public static class StaticConfig {
+		private String                             name;
+		private String                           folder;
+		public String getName() {
+			return name;
+		}
+		public void setName(String name) {
+			this.name = name;
+		}
+		public String getFolder() {
+			return folder;
+		}
+		public void setFolder(String folder) {
+			this.folder = folder;
+		}
+		@Override
+		public String toString() {
+			return "StaticConfig [name=" + name + ", folder=" + folder + "]";
+		}
+	}
 	// upstream mapping
-	private Map<String, String> proxy;
-	private List<UpstreamConfig> upstreams;
+	private Map<String, String>                  proxy;
+	private List<UpstreamConfig>             upstreams;
+	private List<StaticConfig>                statices;
 	
 	public String getName() {
 		return name;
@@ -78,9 +99,15 @@ public class ForwardConfig {
 	public void setUpstreams(List<UpstreamConfig> upstreams) {
 		this.upstreams = upstreams;
 	}
+	public List<StaticConfig> getStatices() {
+		return statices;
+	}
+	public void setStatices(List<StaticConfig> statices) {
+		this.statices = statices;
+	}
 	@Override
 	public String toString() {
 		return "ForwardConfig [name=" + name + ", host=" + host + ", port=" + port + ", proxy=" + proxy + ", upstreams="
-				+ upstreams + "]";
+				+ upstreams + ", statices=" + statices + "]";
 	}
 }
