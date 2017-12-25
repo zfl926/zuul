@@ -20,6 +20,7 @@ public class RequestCircuitBreakerCommand extends HystrixCommand<Void> implement
                 .andThreadPoolKey(HystrixThreadPoolKey.Factory.asKey("CircuitBreakerTest"))
                 .andCommandPropertiesDefaults(    // 配置熔断器
                         HystrixCommandProperties.Setter()
+                        		.withExecutionIsolationStrategy(HystrixCommandProperties.ExecutionIsolationStrategy.THREAD)
                                 .withCircuitBreakerEnabled(true) //默认true
                                 .withCircuitBreakerErrorThresholdPercentage(20)     //（出错百分比阈值，当达到此阈值后，开始短路。默认50%）
                                 .withCircuitBreakerRequestVolumeThreshold(3)        //// 在统计数据之前，必须在10秒内发出3个请求。  默认是20.withCircuitBreakerSleepWindowInMilliseconds(8000)  //（断路多久以后开始尝试是否恢复，默认5s）);
@@ -34,15 +35,23 @@ public class RequestCircuitBreakerCommand extends HystrixCommand<Void> implement
 
 	@Override
 	protected Void run() throws Exception {
+		System.out.println("Thread id = " + Thread.currentThread().getName());
 		handler.handleRequest(exchange);
 		return null;
 	}
 
+	@Override
+	protected Void getFallback() {
+		// fall back handler
+		// 降级操作
+		exchange.setStatusCode(501);
+		exchange.getResponseSender().send("No data available");
+		return null;
+	}
 
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
 		this.exchange = exchange;
 		this.execute();
 	}
-
 }

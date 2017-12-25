@@ -60,6 +60,7 @@ public class RootHandler implements HttpHandler{
 
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
+		System.out.println("Thread id = " + Thread.currentThread().getName());
 		String requestPath = exchange.getRequestPath();
 		boolean isFound = false;
 		for (  Pattern pattern : proxyMapping.keySet() ){

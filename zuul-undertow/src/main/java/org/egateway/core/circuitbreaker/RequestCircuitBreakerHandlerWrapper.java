@@ -15,6 +15,7 @@ public class RequestCircuitBreakerHandlerWrapper implements HttpHandler {
 	
 	@Override
 	public void handleRequest(HttpServerExchange exchange) throws Exception {
+		System.out.println("Thread id = " + Thread.currentThread().getName());
 		RequestCircuitBreakerCommand command = new RequestCircuitBreakerCommand(new Date().toString());
 		command.setHandler(handler);
 		command.handleRequest(exchange);

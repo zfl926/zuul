@@ -268,6 +268,7 @@ public class ProxyHandler implements HttpHandler {
 
         @Override
         public void run() {
+        	System.out.println("[ProxyClientHandler] Thread id = " + Thread.currentThread().getName());
             proxyClient.getConnection(target, exchange, this, -1, TimeUnit.MILLISECONDS);
         }
 
@@ -334,7 +335,7 @@ public class ProxyHandler implements HttpHandler {
         }
 
     }
-
+    // do the request after get connection
     private static class ProxyAction implements Runnable {
         private final ProxyConnection clientConnection;
         private final HttpServerExchange exchange;
